@@ -15,7 +15,6 @@ const cacheGet = async (req, res, next) => {
       next();
     }
     if (reply !== null) {
-      console.log(reply);
       let rep = JSON.parse(reply);
       //paginating resposne from cache
       if (req.params.pgno !== "all") {
@@ -24,6 +23,17 @@ const cacheGet = async (req, res, next) => {
         let to = (parseInt(req.params.pgno) + 1) * 10;
         rep = rep.slice(from, to);
       }
+      rep = rep.map((i) => {
+        return {
+          char_id: i.char_id,
+          name: i.name,
+          occupation: i.occupation,
+          birthday: i.birthday,
+          status: i.status,
+          img: i.img,
+        };
+      });
+      console.log("rep: ", rep);
       res
         .status(200)
         .send(
@@ -38,7 +48,6 @@ const cacheGet = async (req, res, next) => {
 const fetchInfoAPI = async (req, res, next) => {
   try {
     const resp = await axios.get(`${process.env.API_URL}/characters`);
-    console.log(resp.data[(0, 2)]);
     res.locals.data = resp.data;
     next();
   } catch (err) {
@@ -77,6 +86,17 @@ const cacheSet = async (req, res, next) => {
       let to = (parseInt(req.params.pgno) + 1) * 10;
       rep = rep.slice(from, to);
     }
+    rep = rep.map((i) => {
+      return {
+        char_id: i.char_id,
+        name: i.name,
+        occupation: i.occupation,
+        birthday: i.birthday,
+        status: i.status,
+        img: i.img,
+      };
+    });
+    console.log("rep: ", rep);
     res
       .status(200)
       .send(response("Operation Succedded in fetching from API", null, rep));
