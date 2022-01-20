@@ -1,16 +1,15 @@
 class response {
-  constructor(message, error, data) {
+  constructor(message, data) {
     this.message = message;
-    this.error = error;
     this.data = data;
   }
   givenresponse() {
-    return { message: this.message, error: this.error, data: this.data };
+    return { message: this.message, data: this.data };
   }
 }
 class SuccessMessage extends response {
   constructor(message, data) {
-    super(message, null, data);
+    super(message, data);
     this.message = message;
     this.data = data;
   }
@@ -19,20 +18,18 @@ class SuccessMessage extends response {
   }
 }
 class ErrorMessage extends response {
-  constructor(message, error) {
-    super(message, error, null);
+  constructor(message) {
+    super(message, null);
     this.message = message;
-    this.error = error;
-    let data = null;
   }
   responseMessege() {
     return super.givenresponse();
   }
 }
 
-const responseFactory = (message, error, data) => {
-  if (error) {
-    return new ErrorMessage(message, error).responseMessege();
+const responseFactory = (message, data) => {
+  if (data === null) {
+    return new ErrorMessage(message).responseMessege();
   } else {
     return new SuccessMessage(message, data).responseMessege();
   }
