@@ -3,9 +3,8 @@ const axios = require("axios");
 const response = require("../errors/errors").responseFactory;
 const chalk = require("chalk");
 const cacheGet = async (req, res, next) => {
-  const params = req.params.name.toLowerCase().replace(/\s/g, "+");
-  //   let search_regex = `^(${params}).*`;
-  await res.locals.client.get(params, (err, reply) => {
+  const key = req.params.chrtr.toLowerCase().replace(/\s/g, "+") + "_quotes";
+  await res.locals.client.get(key, (err, reply) => {
     if (err) {
       console.error(chalk.yellow(err));
       // Fallback to fetching from API
@@ -27,9 +26,10 @@ const cacheGet = async (req, res, next) => {
 };
 const fetchInfoAPI = async (req, res, next) => {
   try {
-    const params = req.params.name.replace(/\s/g, "+");
+    const param = req.params.chrtr.replace(/\s/g, "+");
+    console.log("Character name: ", param);
     const resp = await axios.get(
-      `${process.env.API_URL}/characters?name=${params}`
+      `${process.env.API_URL}/quote?author=${param}`
     );
     res.locals.data = resp.data;
     next();
@@ -41,11 +41,13 @@ const fetchInfoAPI = async (req, res, next) => {
   }
 };
 const cacheSet = async (req, res, next) => {
+  const key = req.params.chrtr.toLowerCase().replace(/\s/g, "+") + "_quotes";
+  console.log("Key: ", key);
   if (res.locals.data !== undefined) {
     //setting cache
     // key should be in lower case the name of the character seperated by +
     await res.locals.client.set(
-      req.params.name.toLowerCase().replace(/\s/g, "+"),
+      key,
       JSON.stringify(res.locals.data),
       (err, reply) => {
         if (err) {
@@ -55,11 +57,12 @@ const cacheSet = async (req, res, next) => {
       }
     );
   }
+  console.log("Data: ", res.locals.data);
   res
     .status(200)
     .send(
       response("Operation Succedded in fetching from API", res.locals.data)
     );
 };
-router.get("/:name", cacheGet, fetchInfoAPI, cacheSet);
+router.get("/:chrtr", cacheGet, fetchInfoAPI, cacheSet);
 module.exports = router;
