@@ -10,6 +10,11 @@ const reducer = (state, action) => {
         ...state,
         BCS: action.data,
       };
+    case "Set_SearchTerm":
+      return {
+        ...state,
+        searchTerm: action.data,
+      };
     default:
       return state;
   }

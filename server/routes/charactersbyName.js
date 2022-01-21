@@ -14,6 +14,22 @@ const cacheGet = async (req, res, next) => {
     if (reply !== null) {
       let rep = JSON.parse(reply);
       let totalPages = Math.ceil(rep.length / 10);
+      if (req.params.pgno !== "all") {
+        //pgno starting from 0
+        let from = parseInt(req.params.pgno) * 10;
+        let to = (parseInt(req.params.pgno) + 1) * 10;
+        rep = rep.slice(from, to);
+      }
+      rep = rep.map((i) => {
+        return {
+          char_id: i.char_id,
+          name: i.name,
+          occupation: i.occupation,
+          birthday: i.birthday,
+          status: i.status,
+          img: i.img,
+        };
+      });
       res
         .status(200)
         .send(
@@ -60,6 +76,23 @@ const cacheSet = async (req, res, next) => {
       }
     );
   }
+  //paginating resposne from API
+  if (req.params.pgno !== "all") {
+    //pgno starting from 0
+    let from = parseInt(req.params.pgno) * 10;
+    let to = (parseInt(req.params.pgno) + 1) * 10;
+    res.locals.data = res.locals.data.slice(from, to);
+  }
+  res.locals.data = res.locals.data.map((i) => {
+    return {
+      char_id: i.char_id,
+      name: i.name,
+      occupation: i.occupation,
+      birthday: i.birthday,
+      status: i.status,
+      img: i.img,
+    };
+  });
   res
     .status(200)
     .send(
@@ -70,5 +103,5 @@ const cacheSet = async (req, res, next) => {
       )
     );
 };
-router.get("/:name", cacheGet, fetchInfoAPI, cacheSet);
+router.get("/:name/:pgno", cacheGet, fetchInfoAPI, cacheSet);
 module.exports = router;

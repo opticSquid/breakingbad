@@ -14,7 +14,7 @@ function Home(props) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
-  const [{ BB, BCS }] = useStateContext();
+  const [{ BB, BCS, searchTerm }] = useStateContext();
   useEffect(() => {
     (async () => {
       let url;
@@ -26,6 +26,8 @@ function Home(props) {
         } else if (BCS) {
           url = `/api/characters/category/Better Call Saul/${page.currentpage}`;
           setTitle("Better Call Saul");
+        } else if (searchTerm !== "") {
+          url = `/api/characters/${searchTerm}/${page.currentpage}`;
         } else {
           url = `/api/characters/details/${page.currentpage}`;
           setTitle("All Characters");
@@ -47,7 +49,7 @@ function Home(props) {
         setTitle("No Characters Found");
       }
     })();
-  }, [BB, BCS, page.currentpage]);
+  }, [BB, BCS, page.currentpage, searchTerm]);
   const changePage = (event, value) => {
     setPage({ ...page, currentpage: value - 1 });
   };
