@@ -9,12 +9,11 @@ const redis = require("ioredis");
 console.log(chalk.blue("Environment: ", process.env.node_env));
 if (process.env.node_env === "production") {
   console.log(chalk.blue("Environment: ", process.env.node_env));
-  const redisUrl = process.env.REDIS_URL;
-  var client = redis.createClient(redisUrl);
+  const client = new redis(process.env.REDIS_URL);
   client.on("connect", () =>
     console.log(chalk.green("Redis prod Client Connected"))
   );
-  client.on("error", (err) => console.log("Redis Client Error", err));
+  client.on("error", (err) => console.log("Redis prod Client Error", err));
 } else {
   var client = redis.createClient({
     host: "127.0.0.1",
@@ -25,7 +24,7 @@ if (process.env.node_env === "production") {
   client.on("connect", () =>
     console.log(chalk.green("Redis dev Client Connected"))
   );
-  client.on("error", (err) => console.log("Redis Client Error", err));
+  client.on("error", (err) => console.log("Redis dev Client Error", err));
 }
 const port = process.env.PORT || 5000;
 const path = __dirname + "/build";
