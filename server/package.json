@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "local_deploy": "cd ../ && git subtree push --prefix server  heroku main && git push origin main"
   },
   "repository": {
     "type": "git",
