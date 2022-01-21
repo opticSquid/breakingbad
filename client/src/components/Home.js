@@ -50,7 +50,6 @@ function Home(props) {
   }, [BB, BCS, page.currentpage]);
   const changePage = (event, value) => {
     setPage({ ...page, currentpage: value - 1 });
-    //fetchData({ currentpage: value - 1 });
   };
   return (
     <Fragment>

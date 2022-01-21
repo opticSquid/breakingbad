@@ -3,107 +3,87 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Skeleton from "@mui/material/Skeleton";
-import { DataGrid } from "@mui/x-data-grid";
-
 import { Grid } from "@mui/material";
-import Image from "material-ui-image";
-function Details(props) {
-  let char_id = useParams().id;
+import Datatable from "./Datatable";
+import DetailsImage from "./DetailsImage";
+import QuotesTable from "./QuotesTable";
+import Box from "@mui/system/Box";
+import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import SubAppBar from "./SubAppbar";
+function Details() {
+  const char_id = useParams().id;
+  const matches = useMediaQuery("(min-width:600px)");
+  console.log("Id: ", char_id);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
+    console.log("Use effect");
     (async () => {
-      console.log("char_id", char_id);
-      setLoading(true);
+      let url = `/api/characters/id/${char_id}`;
+      console.info("Request URL: ", url);
       try {
-        let response = await axios.get(`/api/characters/id/${char_id}`);
-        console.log("Server response", response.data);
-        if (response.data.data !== null) {
+        setLoading(true);
+        const resp = await axios.get(url);
+        console.log("Server response", resp.data);
+        if (resp.data.data !== null) {
           setLoading(false);
-          setData(response.data.data);
+          setData(resp.data.data);
         } else {
           setLoading(false);
         }
-      } catch (err) {
-        console.error("Error", err);
+      } catch (error) {
+        console.error("Error", error);
         setLoading(false);
       }
     })();
   }, [char_id]);
-  const ArraytoStrings = (occupation) => {
-    console.log(occupation);
-    let occ = "";
-    occupation.forEach((item) => {
-      occ += item + ", ";
-    });
-    console.log(occ);
-    return occ;
-  };
-  const columns = [
-    { field: "attr", headerName: "Attribute", width: "40%" },
-    { field: "value", headerName: "Value", width: "60%" },
-  ];
-  const rows = [
-    {
-      id: 1,
-      Attribute: "Name",
-      Value: data.name,
-    },
-    {
-      id: 2,
-      Attribute: "Birthday",
-      Value: data.birthday,
-    },
-    {
-      id: 3,
-      Attribute: "Occupation",
-      Value: ArraytoStrings(data.occupation),
-    },
-    {
-      id: 4,
-      Attribute: "Status",
-      Value: data.status,
-    },
-    {
-      id: 5,
-      Attribute: "Portrayed",
-      Value: data.portrayed,
-    },
-    {
-      id: 6,
-      Attribute: "Nickname",
-      Value: data.nickname,
-    },
-    {
-      id: 7,
-      Attribute: "BB Seasons",
-      Value: ArraytoStrings(data.appearance),
-    },
-    {
-      id: 8,
-      Attribute: "BCS Seasons",
-      Value: ArraytoStrings(data.better_call_saul_appearance),
-    },
-  ];
   return (
-    <Grid container spacing={2}>
-      {!loading ? (
-        <Fragment>
-          <Grid item xs={12} md={6}>
-            <Image
-              src={data.img}
-              alt={data.name}
-              style={{ width: 200, height: 300 }}
-              animationDuration={3000}
-              color="black"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <DataGrid rows={rows} columns={columns} />
-          </Grid>
-        </Fragment>
-      ) : null}
-    </Grid>
+    <div>
+      <SubAppBar />
+      <Box
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+      >
+        <Typography variant="h3" component="div">
+          Character Details
+        </Typography>
+      </Box>
+      <Grid container spacing={2}>
+        {(loading ? Array.from(new Array(3)) : data).map((item, index) => (
+          <Fragment>
+            {item ? (
+              <Fragment>
+                <Grid item xs={12} md={4} key={item.img}>
+                  <DetailsImage url={item.img} alt={item.name} />
+                </Grid>
+                <Grid item xs={12} md={4} key={item.name}>
+                  <Datatable data={item} />
+                </Grid>
+                <Grid item xs={12} md={4} key={item.nickname}>
+                  <QuotesTable name={item.name} />
+                </Grid>
+              </Fragment>
+            ) : (
+              <Grid item xs={12} md={4} key={index}>
+                <Skeleton
+                  variant="rectangular"
+                  animation="wave"
+                  sx={
+                    matches
+                      ? {
+                          m: 1,
+                          width: window.innerWidth / 3,
+                          height: (90 * window.innerHeight) / 100,
+                        }
+                      : { m: 1, height: window.innerHeight / 3 }
+                  }
+                />
+              </Grid>
+            )}
+          </Fragment>
+        ))}
+      </Grid>
+    </div>
   );
 }
 

@@ -13,6 +13,13 @@ const cacheGet = async (req, res, next) => {
     if (reply !== null) {
       let rep = JSON.parse(reply);
       let totalPages = Math.ceil(rep.length / 10);
+      //paginating resposne from cache
+      if (req.params.pgno !== "all") {
+        //pgno starting from 0
+        let from = parseInt(req.params.pgno) * 10;
+        let to = (parseInt(req.params.pgno) + 1) * 10;
+        rep = rep.slice(from, to);
+      }
       res
         .status(200)
         .send(
@@ -63,6 +70,13 @@ const cacheSet = async (req, res, next) => {
     );
   }
   console.log("Data: ", res.locals.data);
+  //paginating resposne from API
+  if (req.params.pgno !== "all") {
+    //pgno starting from 0
+    let from = parseInt(req.params.pgno) * 10;
+    let to = (parseInt(req.params.pgno) + 1) * 10;
+    res.locals.data = res.locals.data.slice(from, to);
+  }
   res
     .status(200)
     .send(
@@ -73,5 +87,5 @@ const cacheSet = async (req, res, next) => {
       )
     );
 };
-router.get("/:chrtr", cacheGet, fetchInfoAPI, cacheSet);
+router.get("/:chrtr/:pgno", cacheGet, fetchInfoAPI, cacheSet);
 module.exports = router;
