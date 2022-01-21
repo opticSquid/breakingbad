@@ -1,8 +1,10 @@
 # Breaking Bad App
 
-## Works on consuming Breaking Bad API created by: [@timbiles](Tim Biles)
+## Works on consuming Breaking Bad API created by: [@timbiles](https://github.com/timbiles)
 
-Features:
+API URL: [Breaking Bad API](https://breakingbadapi.com/)
+
+## Features
 
 - Caching API responses to speed up the app
 - Ability to search for a character by name
