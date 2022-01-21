@@ -13,6 +13,7 @@ const cacheGet = async (req, res, next) => {
       }
       if (reply !== null) {
         let rep = JSON.parse(reply);
+        let totalPages = Math.ceil(rep.length / 10);
         //paginating resposne from cache
         if (req.params.pgno !== "all") {
           //pgno starting from 0
@@ -33,7 +34,13 @@ const cacheGet = async (req, res, next) => {
         console.log(`rep cat ${res.locals.ctgry} -> `, rep);
         res
           .status(200)
-          .send(response("Operation Succedded in fetching from cache", rep));
+          .send(
+            response(
+              "Operation Succedded in fetching from cache",
+              totalPages,
+              rep
+            )
+          );
       } else {
         // If cache is empty, fetch from API
         next();
@@ -49,6 +56,7 @@ const cacheGet = async (req, res, next) => {
       }
       if (reply !== null) {
         let rep = JSON.parse(reply);
+        let totalPages = Math.ceil(rep.length / 10);
         //paginating resposne from cache
         if (req.params.pgno !== "all") {
           //pgno starting from 0
@@ -69,7 +77,13 @@ const cacheGet = async (req, res, next) => {
         console.log(`rep cat ${res.locals.ctgry} -> `, rep);
         res
           .status(200)
-          .send(response("Operation Succedded in fetching from cache", rep));
+          .send(
+            response(
+              "Operation Succedded in fetching from cache",
+              totalPages,
+              rep
+            )
+          );
       } else {
         // If cache is empty, fetch from API
         next();
@@ -84,6 +98,8 @@ const fetchInfoAPI = async (req, res, next) => {
     const resp = await axios.get(
       `${process.env.API_URL}/characters?category=${res.locals.ctgry}`
     );
+    let totalPages = Math.ceil(resp.data.length / 10);
+    res.locals.pages = totalPages;
     res.locals.data = resp.data;
     next();
   } catch (err) {
@@ -128,7 +144,13 @@ const cacheSet = async (req, res, next) => {
   console.log("rep: ", rep);
   res
     .status(200)
-    .send(response("Operation Succedded in fetching from API", rep));
+    .send(
+      response(
+        "Operation Succedded in fetching from API",
+        res.locals.pages,
+        rep
+      )
+    );
 };
 router.get("/:ctgry/:pgno", cacheGet, fetchInfoAPI, cacheSet);
 module.exports = router;

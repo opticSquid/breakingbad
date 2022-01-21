@@ -11,12 +11,15 @@ const cacheGet = async (req, res, next) => {
       next();
     }
     if (reply !== null) {
+      let rep = JSON.parse(reply);
+      let totalPages = Math.ceil(rep.length / 10);
       res
         .status(200)
         .send(
           response(
             "Operation Succedded in fetching from cache",
-            JSON.parse(reply)
+            totalPages,
+            rep
           )
         );
     } else {
@@ -31,6 +34,8 @@ const fetchInfoAPI = async (req, res, next) => {
     const resp = await axios.get(
       `${process.env.API_URL}/quote?author=${param}`
     );
+    let totalPages = Math.ceil(resp.data.length / 10);
+    res.locals.pages = totalPages;
     res.locals.data = resp.data;
     next();
   } catch (err) {
@@ -61,7 +66,11 @@ const cacheSet = async (req, res, next) => {
   res
     .status(200)
     .send(
-      response("Operation Succedded in fetching from API", res.locals.data)
+      response(
+        "Operation Succedded in fetching from API",
+        res.locals.pages,
+        res.locals.data
+      )
     );
 };
 router.get("/:chrtr", cacheGet, fetchInfoAPI, cacheSet);

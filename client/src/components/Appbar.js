@@ -10,18 +10,31 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import SearchBar from "./SearchBar";
+import { useStateContext } from "../context/ContextProvider";
 export default function Appbar() {
   const [menu, setMenu] = useState(false);
-  const [check, setCheck] = useState({
-    BB: false,
-    BCS: false,
-  });
+  const [{ BB, BCS }, dispatch] = useStateContext();
   const setCategory = (event) => {
-    setCheck({
-      ...check,
-      [event.target.name]: event.target.checked,
-    });
+    let value;
+    if (event.target.name === "BB") {
+      dispatch({
+        type: "Set_BB",
+        data: !BB,
+      });
+      dispatch({
+        type: "Set_BCS",
+        data: false,
+      });
+    } else {
+      dispatch({
+        type: "Set_BCS",
+        data: !BCS,
+      });
+      dispatch({
+        type: "Set_BB",
+        data: false,
+      });
+    }
   };
   const list = () => (
     <Box sx={{ width: 250 }} role="presentation">
@@ -31,15 +44,11 @@ export default function Appbar() {
         </ListItem>
         {["Breaking Bad", "Better Call Saul"].map((text, index) => (
           <Fragment>
-            <ListItem button key={text}>
+            <ListItem key={text}>
               {index === 0 ? (
-                <Checkbox name="BB" checked={check.BB} onChange={setCategory} />
+                <Checkbox name="BB" checked={BB} onChange={setCategory} />
               ) : (
-                <Checkbox
-                  name="BCS"
-                  checked={check.BCS}
-                  onChange={setCategory}
-                />
+                <Checkbox name="BCS" checked={BCS} onChange={setCategory} />
               )}
               <Typography variant="body1">{text}</Typography>
             </ListItem>
@@ -65,19 +74,13 @@ export default function Appbar() {
           >
             <MenuIcon />
           </IconButton>
-          <Box sx={{ flexGrow: 0.6, display: { xs: "none", sm: "block" } }} />
+          <Box sx={{ flexGrow: 0.46, display: { xs: "none", sm: "block" } }} />
           <Drawer anchor="left" open={menu} onClose={() => setMenu(false)}>
             {list()}
           </Drawer>
-          <Typography
-            variant="h6"
-            color="inherit"
-            component="div"
-            sx={{ flexGrow: 0.5, display: { xs: "none", sm: "block" } }}
-          >
+          <Typography variant="h6" color="inherit" component="div">
             Breaking Bad
           </Typography>
-          <SearchBar />
         </Toolbar>
       </AppBar>
     </Box>

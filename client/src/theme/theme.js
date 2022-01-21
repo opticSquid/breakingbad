@@ -1,12 +1,13 @@
 import { createTheme } from "@mui/material/styles";
+import { blue, pink } from "@mui/material/colors";
 const Theme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#fdd835",
+      main: blue[800],
     },
     secondary: {
-      main: "#303f9f",
+      main: pink["A400"],
     },
   },
 });
