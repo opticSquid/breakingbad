@@ -26,9 +26,14 @@ if (process.env.node_env === "production") {
   client.on("error", (err) => console.log("Redis Client Error", err));
 }
 const port = process.env.PORT || 5000;
+const path = __dirname + '/build';
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path));
+app.get("/", (req, res) => {
+  res.sendFile(path + "/index.html");
+})
 app.use(
   "/api",
   (req, res, next) => {
