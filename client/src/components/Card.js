@@ -4,13 +4,18 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
 import Image from "material-ui-image";
 import CakeIcon from "@mui/icons-material/Cake";
 import BoyIcon from "@mui/icons-material/Boy";
 import WorkIcon from "@mui/icons-material/Work";
-function CharacterCard({ name, occupation, birthday, status, img }) {
+function CharacterCard({ char_id, name, occupation, birthday, status, img }) {
+  let navigate = useNavigate();
+  const sendtoDetailsPage = () => {
+    navigate(`/details/${char_id}`);
+  };
   return (
-    <Card sx={{ display: "flex", m: 2 }}>
+    <Card sx={{ display: "flex", m: 2 }} onClick={sendtoDetailsPage}>
       <CardMedia sx={{ width: 200, height: 300 }}>
         <Image
           src={img}
