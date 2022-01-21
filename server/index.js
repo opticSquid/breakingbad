@@ -15,12 +15,7 @@ if (process.env.node_env === "production") {
   );
   client.on("error", (err) => console.log("Redis prod Client Error", err));
 } else {
-  var client = redis.createClient({
-    host: "127.0.0.1",
-    port: 6379,
-    username: "",
-    password: "",
-  });
+  var client = redis.createClient(process.env.REDIS_URL);
   client.on("connect", () =>
     console.log(chalk.green("Redis dev Client Connected"))
   );
