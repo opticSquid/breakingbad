@@ -19,7 +19,7 @@
   "author": "Soumalya Bhattacharya",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "axios": "^0.25.0",
+    "axios": "^1.2.6",
     "chalk": "^4.1.2",
     "cors": "^2.8.5",
     "dotenv": "^14.2.0",
